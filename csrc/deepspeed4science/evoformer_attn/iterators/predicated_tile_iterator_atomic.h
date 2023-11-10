@@ -26,7 +26,7 @@ struct atomic_store<AccessType,
     {
         static_assert(!(kCount % 2), "kCount must be even");
         half2* p = reinterpret_cast<half2*>(ptr);
-        uint const* data = reinterpret_cast<uint const*>(&D);
+        unsigned int const* data = reinterpret_cast<unsigned int const*>(&D);
         asm volatile(
             "{\n"
             "  .reg .pred p;\n"
@@ -53,7 +53,7 @@ struct atomic_store<AccessType,
     atomic_store(AccessType const& D, void* ptr, bool pred_guard)
     {
         Element* p = reinterpret_cast<Element*>(ptr);
-        uint const* data = reinterpret_cast<uint const*>(&D);
+        unsigned int const* data = reinterpret_cast<unsigned int const*>(&D);
         asm volatile(
             "{\n"
             "  .reg .pred p;\n"

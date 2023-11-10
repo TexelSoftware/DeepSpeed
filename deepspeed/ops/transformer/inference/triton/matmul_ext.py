@@ -66,6 +66,8 @@ class AutotuneCacheManager:
             with FileLock(self.lock_path):
                 with open(self.file_path + ".tmp", 'wb') as handle:
                     pickle.dump(table, handle)
+                if os.path.exists(self.file_path):
+                    os.remove(self.file_path)
                 os.rename(self.file_path + ".tmp", self.file_path)
 
     def load(self):

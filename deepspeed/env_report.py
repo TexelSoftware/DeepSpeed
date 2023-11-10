@@ -8,6 +8,7 @@ import torch
 import deepspeed
 import subprocess
 import argparse
+import sys
 from .ops.op_builder.all_ops import ALL_OPS
 from .git_version_info import installed_ops, torch_info
 from deepspeed.accelerator import get_accelerator
@@ -125,7 +126,8 @@ def debug_report():
     else:
         report.extend([("deepspeed wheel compiled w.", f"torch {torch_info['version']} ")])
 
-    report.append(("shared memory (/dev/shm) size", get_shm_size()))
+    if sys.platform != "win32":
+        report.append(("shared memory (/dev/shm) size", get_shm_size()))
 
     print("DeepSpeed general environment info:")
     for name, value in report:

@@ -119,7 +119,11 @@ cmdclass = {}
 # For any pre-installed ops force disable ninja.
 if torch_available:
     from accelerator import get_accelerator
-    cmdclass['build_ext'] = get_accelerator().build_extension().with_options(use_ninja=False)
+    cmdclass['build_ext'] = get_accelerator().build_extension().with_options(
+        use_ninja=False,
+        py_limited_api=True,
+        define_macros=[('Py_LIMITED_API', '0x030a00f0')]
+    )
 
 if torch_available:
     TORCH_MAJOR = torch.__version__.split('.')[0]
@@ -309,9 +313,16 @@ setup(name='deepspeed',
       extras_require=extras_require,
       packages=find_packages(include=['deepspeed', 'deepspeed.*']),
       include_package_data=True,
+      entry_points={
+          'console_scripts': [
+            'deepspeed = deepspeed.launcher.runner:main',
+            'ds = deepspeed.launcher.runner:main',
+            'ds_report = deepspeed.env_report:cli_main',
+            'dsr = deepspeed.env_report:cli_main'
+          ]
+      },
       scripts=[
-          'bin/deepspeed', 'bin/deepspeed.pt', 'bin/ds', 'bin/ds_ssh', 'bin/ds_report', 'bin/ds_bench', 'bin/dsr',
-          'bin/ds_elastic'
+          'bin/deepspeed.pt', 'bin/ds_ssh', 'bin/ds_bench', 'bin/ds_elastic'
       ],
       classifiers=[
           'Programming Language :: Python :: 3.6', 'Programming Language :: Python :: 3.7',

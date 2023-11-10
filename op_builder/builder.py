@@ -70,7 +70,7 @@ cuda_minor_mismatch_ok = {
         "10.2",
     ],
     11: ["11.0", "11.1", "11.2", "11.3", "11.4", "11.5", "11.6", "11.7", "11.8"],
-    12: ["12.0", "12.1"],
+    12: ["12.0", "12.1", "12.2", "12.3"],
 }
 
 
@@ -650,7 +650,7 @@ class CUDAOpBuilder(OpBuilder):
 
     def cxx_args(self):
         if sys.platform == "win32":
-            return ['-O2']
+            return ['-O2', "/Zc:__cplusplus"]
         else:
             return ['-O3', '-std=c++17', '-g', '-Wno-reorder']
 
@@ -671,7 +671,9 @@ class CUDAOpBuilder(OpBuilder):
             args += [
                 '-allow-unsupported-compiler' if sys.platform == "win32" else '', '--use_fast_math',
                 '-std=c++17' if cuda_major > 10 else '-std=c++14', '-U__CUDA_NO_HALF_OPERATORS__',
-                '-U__CUDA_NO_HALF_CONVERSIONS__', '-U__CUDA_NO_HALF2_OPERATORS__'
+                '-U__CUDA_NO_HALF_CONVERSIONS__', '-U__CUDA_NO_HALF2_OPERATORS__',
+                '-Xcompiler' if sys.platform == "win32" else '',
+                '/Zc:__cplusplus' if sys.platform == "win32" else ''
             ]
             if os.environ.get('DS_DEBUG_CUDA_BUILD', '0') == '1':
                 args.append('--ptxas-options=-v')
